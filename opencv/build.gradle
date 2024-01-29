@@ -53,12 +53,6 @@ android {
         }
     }
 
-    externalNativeBuild {
-        cmake {
-            path (project.projectDir.toString() + '/libcxx_helper/CMakeLists.txt')
-        }
-    }
-
 }
 
 dependencies {
