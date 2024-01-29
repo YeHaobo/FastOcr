@@ -1,0 +1,3 @@
+include ':fastocr'
+include ':opencv'
+include ':app'

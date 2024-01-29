@@ -1,0 +1,38 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+
+android {
+
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 28
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+}
+
+dependencies {
+    implementation project(path: ':opencv')//opencv SDK 4.0.9
+    implementation 'com.rmtheis:tess-two:9.1.0'//OCR Tesseract 文字识别
+}
+
+//JitPack编译打包配置
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.YeHaobo'
+                artifactId = 'fastocr'
+            }
+        }
+    }
+}
