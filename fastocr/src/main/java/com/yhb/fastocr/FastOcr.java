@@ -94,7 +94,7 @@ public class FastOcr {
                     List<Bitmap> bitmapList =  CvImageFactory.decodeCuts(bitmapSrc, rotate, 150).getCvAllBitmaps();
                     for(Bitmap bitmap : bitmapList){
                         ocrApi.setImage(bitmap);
-                        sb.append(ocrApi.getUTF8Text().replace(" ",""));
+                        sb.append(ocrApi.getUTF8Text().replace(" ","").replace("\n", ""));
                         sb.append("\n");
                         ocrApi.stop();//停止
                         ocrApi.clear();//清除
