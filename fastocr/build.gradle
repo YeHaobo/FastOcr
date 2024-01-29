@@ -20,7 +20,7 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':opencv')//opencv SDK 4.0.9
+    implementation project(path: ':opencv')//opencv SDK 4.9.0
     implementation 'com.rmtheis:tess-two:9.1.0'//OCR Tesseract 文字识别
 }
 
