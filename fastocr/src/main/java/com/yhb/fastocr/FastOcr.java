@@ -7,7 +7,6 @@ import com.googlecode.tesseract.android.TessBaseAPI;
 import com.yhb.fastocr.cv.CvImageFactory;
 import org.opencv.android.OpenCVLoader;
 import java.io.File;
-import java.util.List;
 
 /**
  * OCR识别
@@ -90,15 +89,13 @@ public class FastOcr {
             @Override
             public void run() {
                 try{
-                    StringBuilder sb = new StringBuilder();
                     Bitmap bitmap =  CvImageFactory.decodeFull(bitmapSrc, rotate, 150).getCvInvBitmap();
                     ocrApi.setImage(bitmap);//设置图片
                     String text = ocrApi.getUTF8Text();//识别
-                    text = text != null ? text.replace(" ","").replace("\n", "") : "";
-                    sb.append(text);
+                    text = text == null ? "" : text.replace(" ","").replace("\n", "");
                     ocrApi.stop();//停止
                     ocrApi.clear();//清除
-                    if(result != null) result.fastOcrText(true, ocrApi.getInitLanguagesAsString(), sb.toString());
+                    if(result != null) result.fastOcrText(true, ocrApi.getInitLanguagesAsString(), text);
                 }catch (Exception e){
                     if(result != null) result.fastOcrText(false, ocrApi.getInitLanguagesAsString(), e.getMessage());
                 }
