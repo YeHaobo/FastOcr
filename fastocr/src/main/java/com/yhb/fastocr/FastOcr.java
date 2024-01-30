@@ -91,16 +91,13 @@ public class FastOcr {
             public void run() {
                 try{
                     StringBuilder sb = new StringBuilder();
-                    List<Bitmap> bitmapList =  CvImageFactory.decodeFull(bitmapSrc, rotate, 150).getCvAllBitmaps();
-                    for(Bitmap bitmap : bitmapList){
-                        ocrApi.setImage(bitmap);//设置图片
-                        String text = ocrApi.getUTF8Text();//识别
-                        text = text != null ? text.replace(" ","").replace("\n", "") : "";
-                        sb.append(text);
-                        sb.append(!text.isEmpty() ? "\n" : "");
-                        ocrApi.stop();//停止
-                        ocrApi.clear();//清除
-                    }
+                    Bitmap bitmap =  CvImageFactory.decodeFull(bitmapSrc, rotate, 150).getCvInvBitmap();
+                    ocrApi.setImage(bitmap);//设置图片
+                    String text = ocrApi.getUTF8Text();//识别
+                    text = text != null ? text.replace(" ","").replace("\n", "") : "";
+                    sb.append(text);
+                    ocrApi.stop();//停止
+                    ocrApi.clear();//清除
                     if(result != null) result.fastOcrText(true, ocrApi.getInitLanguagesAsString(), sb.toString());
                 }catch (Exception e){
                     if(result != null) result.fastOcrText(false, ocrApi.getInitLanguagesAsString(), e.getMessage());
