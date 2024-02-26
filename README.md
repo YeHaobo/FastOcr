@@ -24,8 +24,8 @@ Android OCR 快速识别
 ```java
   dependencies {
     ... ...
-    implementation 'com.github.YeHaobo.FastOcr:fastocr:1.3'//fastocr核心
-    implementation 'com.github.YeHaobo.FastOcr:opencv:1.3'//opencv
+    implementation 'com.github.YeHaobo.FastOcr:fastocr:1.4'//fastocr核心
+    implementation 'com.github.YeHaobo.FastOcr:opencv:1.4'//opencv
     ... ...
   }
 ```
