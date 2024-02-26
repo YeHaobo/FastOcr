@@ -91,3 +91,12 @@ _项目中是将文字包从assets中拷贝至本地使用，但建议把包放�
     List<Bitmap> cutInvBitmaps = cvImageCut.getCutInvBitmaps();//逆向二值化文字裁剪图
 		
 ```
+
+### 释放
+```java
+    @Override
+    protected void onDestroy() {
+        if(fastOcr != null) fastOcr.release();
+        super.onDestroy();
+    }
+```
