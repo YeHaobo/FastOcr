@@ -3,7 +3,7 @@ Android OCR 快速识别
 1、内部使用opencv处理图片，可获取旋转、灰度、二值化、裁剪等处理后的图片  
 2、图片处理完成后使用tess-two（Tesseract）进行文字识别
 
-![](/screen.png)
+![](/screenshot.jpg)
 
 ### 第三方开源
 1、tess-two:9.1.0  
