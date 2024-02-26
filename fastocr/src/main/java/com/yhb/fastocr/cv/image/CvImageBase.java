@@ -3,13 +3,20 @@ package com.yhb.fastocr.cv.image;
 import android.graphics.Bitmap;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
-import java.util.List;
 
 /**Opencv位图base类*/
-public abstract class CvImageBase {
+public class CvImageBase {
 
-    /**获取所有位图*/
-    public abstract List<Bitmap> getCvAllBitmaps();
+    /**原图*/
+    private Bitmap srcBitmap;
+
+    public CvImageBase(Mat srcMat) {
+        this.srcBitmap = mat2Bitmap(srcMat);
+    }
+
+    public Bitmap getSrcBitmap() {
+        return srcBitmap;
+    }
 
     /**mat转换bitmap*/
     public Bitmap mat2Bitmap(Mat mat){

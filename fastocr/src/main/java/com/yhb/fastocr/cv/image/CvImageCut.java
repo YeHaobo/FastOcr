@@ -6,42 +6,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**Opencv加工分割位图实体*/
-public class CvImageCut extends CvImageBase {
+public class CvImageCut extends CvImageThreshold {
 
     /**正向二值化位图*/
-    private List<Bitmap> cvBitmaps;
+    private List<Bitmap> cutBitmaps;
     /**反向二值化位图*/
-    private List<Bitmap> cvInvBitmaps;
+    private List<Bitmap> cutInvBitmaps;
 
-    /**获取所有位图*/
-    @Override
-    public List<Bitmap> getCvAllBitmaps() {
-        List<Bitmap> bitmapList = new ArrayList<>();
-        bitmapList.addAll(cvBitmaps);
-        bitmapList.addAll(cvInvBitmaps);
-        return bitmapList;
-    }
-
-    /**构造*/
-    public CvImageCut(List<Mat> mats, List<Mat> invMats) {
-        this.cvBitmaps = new ArrayList<>();
-        this.cvInvBitmaps = new ArrayList<>();
-        for(Mat mat : mats){
-            cvBitmaps.add(mat2Bitmap(mat));
+    public CvImageCut(Mat srcMat, Mat rotateMat, Mat grayMat, Mat thresholdMat, Mat thresholdInvMat, List<Mat> cutMats, List<Mat> cutInvMats) {
+        super(srcMat, rotateMat, grayMat, thresholdMat, thresholdInvMat);
+        this.cutBitmaps = new ArrayList<>();
+        this.cutInvBitmaps = new ArrayList<>();
+        for(Mat mat : cutMats){
+            cutBitmaps.add(mat2Bitmap(mat));
         }
-        for(Mat mat : invMats){
-            cvInvBitmaps.add(mat2Bitmap(mat));
+        for(Mat mat : cutInvMats){
+            cutInvBitmaps.add(mat2Bitmap(mat));
         }
     }
 
-    /**获取正向二值化位图*/
-    public List<Bitmap> getCvBitmaps() {
-        return cvBitmaps;
+    public List<Bitmap> getCutBitmaps() {
+        return cutBitmaps;
     }
 
-    /**获取逆向二值化位图*/
-    public List<Bitmap> getCvInvBitmaps() {
-        return cvInvBitmaps;
+    public List<Bitmap> getCutInvBitmaps() {
+        return cutInvBitmaps;
     }
 
 }

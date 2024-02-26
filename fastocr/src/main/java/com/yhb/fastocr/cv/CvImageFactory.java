@@ -2,7 +2,9 @@ package com.yhb.fastocr.cv;
 
 import android.graphics.Bitmap;
 import com.yhb.fastocr.cv.image.CvImageCut;
-import com.yhb.fastocr.cv.image.CvImageFull;
+import com.yhb.fastocr.cv.image.CvImageGray;
+import com.yhb.fastocr.cv.image.CvImageRotate;
+import com.yhb.fastocr.cv.image.CvImageThreshold;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -21,69 +23,100 @@ import java.util.List;
  */
 public class CvImageFactory {
 
-    /**加工*/
-    public static CvImageFull decodeFull(String path, int rotate, int threshold){
-        Mat mat = createFull(Imgcodecs.imread(path), rotate, threshold, true);
-        Mat invMat = createFull(Imgcodecs.imread(path), rotate, threshold, false);
-        return new CvImageFull(mat, invMat);
+    /**旋转*/
+    public static CvImageRotate decodeRotate(String path, int rotate){
+        Mat srcMat = Imgcodecs.imread(path);
+        Mat rotateMat = rotate(srcMat, rotate);
+        return new CvImageRotate(srcMat, rotateMat);
     }
-
-    /**加工*/
-    public static CvImageFull decodeFull(Bitmap bitmapIn, int rotate, int threshold){
+    public static CvImageRotate decodeRotate(Bitmap bitmap, int rotate){
         Mat srcMat = new Mat();
-        Utils.bitmapToMat(bitmapIn, srcMat);
-        Mat mat = createFull(srcMat, rotate, threshold, true);
-        Mat invMat = createFull(srcMat, rotate, threshold, false);
-        return new CvImageFull(mat, invMat);
+        Utils.bitmapToMat(bitmap, srcMat);
+        Mat rotateMat = rotate(srcMat, rotate);
+        return new CvImageRotate(srcMat, rotateMat);
     }
-
-    /**加工并裁剪*/
-    public static CvImageCut decodeCuts(String path, int rotate, int threshold){
-        List<Mat> matList = createCuts(Imgcodecs.imread(path), rotate, threshold, true);
-        List<Mat> invMatList = createCuts(Imgcodecs.imread(path), rotate, threshold, false);
-        return new CvImageCut(matList, invMatList);
-    }
-
-    /**加工并裁剪*/
-    public static CvImageCut decodeCuts(Bitmap bitmapIn, int rotate, int threshold){
-        Mat srcMat = new Mat();
-        Utils.bitmapToMat(bitmapIn, srcMat);
-        List<Mat> matList = createCuts(srcMat, rotate, threshold, true);
-        List<Mat> invMatList = createCuts(srcMat, rotate, threshold, false);
-        return new CvImageCut(matList, invMatList);
-    }
-
-    /**加工原图*/
-    private static Mat createFull(Mat srcMat, int rotate, int threshold, boolean inversion){
-        //旋转
+    private static Mat rotate(Mat srcMat, int rotate){
         Mat rotateMat = new Mat();
         switch (rotate % 360){
             case 90: Core.rotate(srcMat, rotateMat, Core.ROTATE_90_CLOCKWISE); break;//顺时针旋转90
             case 180: Core.rotate(srcMat, rotateMat, Core.ROTATE_180); break;//旋转180
             case 270: Core.rotate(srcMat, rotateMat, Core.ROTATE_90_COUNTERCLOCKWISE); break;//逆时针旋转90
-            default: rotateMat = srcMat;
+            default: rotateMat = srcMat;break;//不变
         }
-
-        //灰度图
-        Mat grayMat = new Mat();
-        Imgproc.cvtColor(rotateMat, grayMat, Imgproc.COLOR_BGR2GRAY);
-
-        //二值化
-        Mat binaryMat = new Mat();
-        Imgproc.threshold(grayMat, binaryMat, threshold, 255, inversion ? Imgproc.THRESH_BINARY_INV : Imgproc.THRESH_BINARY);//二值化（正向/反向）
-
-        return binaryMat;
+        return rotateMat;
     }
 
-    /**加工并裁切原图*/
-    private static List<Mat> createCuts(Mat srcMat, int rotate, int threshold, boolean inversion){
-        //二值
-        Mat binaryMat = createFull(srcMat, rotate, threshold, inversion);
+    /**灰度*/
+    public static CvImageGray decodeGray(String path, int rotate){
+        Mat srcMat = Imgcodecs.imread(path);
+        Mat rotateMat = rotate(srcMat, rotate);
+        Mat grayMat = gray(rotateMat);
+        return new CvImageGray(srcMat, rotateMat, grayMat);
+    }
+    public static CvImageGray decodeGray(Bitmap bitmap, int rotate){
+        Mat srcMat = new Mat();
+        Utils.bitmapToMat(bitmap, srcMat);
+        Mat rotateMat = rotate(srcMat, rotate);
+        Mat grayMat = gray(rotateMat);
+        return new CvImageGray(srcMat, rotateMat, grayMat);
+    }
+    private static Mat gray(Mat srcMat){
+        Mat grayMat = new Mat();
+        Imgproc.cvtColor(srcMat, grayMat, Imgproc.COLOR_BGR2GRAY);
+        return grayMat;
+    }
 
+    /**二值化（正向/反向）*/
+    public static CvImageThreshold decodeThreshold(String path, int rotate, int threshold){
+        Mat srcMat = Imgcodecs.imread(path);
+        Mat rotateMat = rotate(srcMat, rotate);
+        Mat grayMat = gray(rotateMat);
+        Mat thresholdMat = threshold(grayMat, threshold, true);
+        Mat thresholdInvMat = threshold(grayMat, threshold, false);
+        return new CvImageThreshold(srcMat, rotateMat, grayMat, thresholdMat, thresholdInvMat);
+    }
+    public static CvImageThreshold decodeThreshold(Bitmap bitmap, int rotate, int threshold){
+        Mat srcMat = new Mat();
+        Utils.bitmapToMat(bitmap, srcMat);
+        Mat rotateMat = rotate(srcMat, rotate);
+        Mat grayMat = gray(rotateMat);
+        Mat thresholdMat = threshold(grayMat, threshold, true);
+        Mat thresholdInvMat = threshold(grayMat, threshold, false);
+        return new CvImageThreshold(srcMat, rotateMat, grayMat, thresholdMat, thresholdInvMat);
+    }
+    private static Mat threshold(Mat srcMat, int threshold, boolean inversion){
+        Mat thresholdMat = new Mat();
+        Imgproc.threshold(srcMat, thresholdMat, threshold, 255, inversion ? Imgproc.THRESH_BINARY_INV : Imgproc.THRESH_BINARY);//正向/反向
+        return thresholdMat;
+    }
+
+    /**裁切*/
+    public static CvImageCut decodeCut(String path, int rotate, int threshold){
+        Mat srcMat = Imgcodecs.imread(path);
+        Mat rotateMat = rotate(srcMat, rotate);
+        Mat grayMat = gray(rotateMat);
+        Mat thresholdMat = threshold(grayMat, threshold, true);
+        Mat thresholdInvMat = threshold(grayMat, threshold, false);
+        List<Mat> cutMats = cut(thresholdMat);
+        List<Mat> cutInvMats = cut(thresholdInvMat);
+        return new CvImageCut(srcMat, rotateMat, grayMat, thresholdMat, thresholdInvMat, cutMats, cutInvMats);
+    }
+    public static CvImageCut decodeCut(Bitmap bitmap, int rotate, int threshold){
+        Mat srcMat = new Mat();
+        Utils.bitmapToMat(bitmap, srcMat);
+        Mat rotateMat = rotate(srcMat, rotate);
+        Mat grayMat = gray(rotateMat);
+        Mat thresholdMat = threshold(grayMat, threshold, true);
+        Mat thresholdInvMat = threshold(grayMat, threshold, false);
+        List<Mat> cutMats = cut(thresholdMat);
+        List<Mat> cutInvMats = cut(thresholdInvMat);
+        return new CvImageCut(srcMat, rotateMat, grayMat, thresholdMat, thresholdInvMat, cutMats, cutInvMats);
+    }
+    private static List<Mat> cut(Mat srcMat){
         //腐蚀
         Mat erodeMat = new Mat();
         Mat elementMat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(20, 10));//腐蚀像素点例
-        Imgproc.erode(binaryMat, erodeMat, elementMat);//腐蚀
+        Imgproc.erode(srcMat, erodeMat, elementMat);//腐蚀
 
         //提取轮廓
         List<MatOfPoint> pointList = new ArrayList<>();
@@ -94,7 +127,7 @@ public class CvImageFactory {
         for(MatOfPoint point : pointList){
             Rect rect = Imgproc.boundingRect(point);//转rect
 //            Imgproc.rectangle(erodeMat, rect, new Scalar(0,0,255));//画轮廓
-            subMatList.add(new Mat(binaryMat, rect));
+            subMatList.add(new Mat(srcMat, rect));
         }
 
         return subMatList;

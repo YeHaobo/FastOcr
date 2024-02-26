@@ -89,7 +89,7 @@ public class FastOcr {
             @Override
             public void run() {
                 try{
-                    Bitmap bitmap =  CvImageFactory.decodeFull(bitmapSrc, rotate, 150).getCvInvBitmap();
+                    Bitmap bitmap =  CvImageFactory.decodeThreshold(bitmapSrc, rotate, 150).getThresholdInvBitmap();
                     ocrApi.setImage(bitmap);//设置图片
                     String text = ocrApi.getUTF8Text();//识别
                     text = text == null ? "" : text.replace(" ","").replace("\n", "");
