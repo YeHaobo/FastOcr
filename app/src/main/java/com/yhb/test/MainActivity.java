@@ -19,6 +19,7 @@ import java.io.File;
 /**测试界面*/
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, FastOcrInitResult, FastOcrTextResult {
 
+    private static final int THRESHOLD = 150;//二值化阈值
     private ImageView img1, img2, img3, img4;
     private TextView tv;
     private Handler handler;
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if(fastOcr == null) return;
-        fastOcr.getText(bitmap, 0, this);
+        fastOcr.getText(bitmap, 0, THRESHOLD, this);
         Toast.makeText(this, "文字识别中...", Toast.LENGTH_SHORT).show();
     }
 
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void fastOcrText(boolean result, String language, final String text) {
         if(bitmap == null) return;
-        CvImageThreshold cvImageThreshold = CvImageFactory.decodeThreshold(bitmap, 0, 150);
+        CvImageThreshold cvImageThreshold = CvImageFactory.decodeThreshold(bitmap, 0, THRESHOLD);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

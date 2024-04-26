@@ -74,22 +74,22 @@ public class FastOcr {
     }
 
     /**识别*/
-    public void getText(final String path, final int rotate, final FastOcrTextResult result){
+    public void getText(final String path, final int rotate, final int threshold, final FastOcrTextResult result){
         handler.post(new Runnable() {
             @Override
             public void run() {
-                getText(BitmapFactory.decodeFile(path), rotate, result);
+                getText(BitmapFactory.decodeFile(path), rotate, threshold, result);
             }
         });
     }
 
     /**识别*/
-    public void getText(final Bitmap bitmapSrc, final int rotate, final FastOcrTextResult result){
+    public void getText(final Bitmap bitmapSrc, final int rotate, final int threshold, final FastOcrTextResult result){
         handler.post(new Runnable() {
             @Override
             public void run() {
                 try{
-                    Bitmap bitmap =  CvImageFactory.decodeThreshold(bitmapSrc, rotate, 150).getThresholdInvBitmap();
+                    Bitmap bitmap =  CvImageFactory.decodeThreshold(bitmapSrc, rotate, threshold).getThresholdInvBitmap();
                     ocrApi.setImage(bitmap);//设置图片
                     String text = ocrApi.getUTF8Text();//识别
                     text = text == null ? "" : text.replace(" ","").replace("\n", "");
