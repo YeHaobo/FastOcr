@@ -24,8 +24,8 @@ Android OCR 快速识别
 ```java
   dependencies {
     ... ...
-    implementation 'com.github.YeHaobo.FastOcr:fastocr:1.4'//fastocr核心
-    implementation 'com.github.YeHaobo.FastOcr:opencv:1.4'//opencv
+    implementation 'com.github.YeHaobo.FastOcr:fastocr:1.5'//fastocr核心
+    implementation 'com.github.YeHaobo.FastOcr:opencv:1.5'//opencv
     ... ...
   }
 ```
@@ -63,7 +63,7 @@ _项目中是将文字包从assets中拷贝至本地使用，但建议把包放�
 ### 识别
 ```java
         if(fastOcr == null) return;
-        fastOcr.getText(bitmap, 0, new FastOcrTextResult() {//0:旋转角度
+        fastOcr.getText(bitmap, 0, 150, new FastOcrTextResult() {//0:旋转角度 150：二值化阈值
             @Override
             public void fastOcrText(boolean result, String language, String text) {
               Log.e("FastOcrText", (result ? ("使用语言：" + language + "\n识别文字：" + text) : ("识别失败：" + text)));
